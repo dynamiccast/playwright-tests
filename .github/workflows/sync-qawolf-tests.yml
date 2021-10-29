@@ -3,7 +3,10 @@
 name: Sync QA Wolf tests
 
 # Controls when the workflow will run
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'  # every day at midnight
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:

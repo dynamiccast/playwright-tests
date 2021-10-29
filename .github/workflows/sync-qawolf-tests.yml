@@ -110,4 +110,4 @@ jobs:
           # Stage the file, commit and push
           git add ./qawolf/*
           git commit -m "QA Wolf tests sync $(date +"%Y-%m-%d")"
-          git push origin master
+          git push origin main

@@ -60,16 +60,20 @@ async function writeTestCode(teamId) {
         __typename
         }
       }`);
+  let promises = [];
 
   const helperContent = await getContent(`helpers.${teamId}`);
-  await overwriteFile(folder + "helpers.js", helperContent);
+  promises.push(overwriteFile(folder + "helpers.js", helperContent));
 
   response.data.data.tests.map(async (test) => {
     const content = await getContent(`test.${test.id}`);
     const outputFileName = `${lodash.snakeCase(test.name)}.js`;
 
-    await overwriteFile(folder + outputFileName, content);
+    console.log(`Copy "${test.name}"`);
+    promises.push(overwriteFile(folder + outputFileName, content));
   });
+  
+  await Promise.all(promises);
 }
 
 try {

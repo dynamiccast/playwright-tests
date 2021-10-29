@@ -25,8 +25,8 @@ jobs:
           QAWOLF_TEAM_ID: ${{ secrets.QAWOLF_TEAM_ID }}
           QAWOLF_AUTH_TOKEN: ${{ secrets.QAWOLF_AUTH_TOKEN }}
         run: |
-          cd ./github/workflow/ ; npm install
-          node ./github/workflow/index.js
+          cd ./.github/workflows/ ; npm install
+          node ./.github/workflows/index.js
 
       - name: setup git config
         run: |

@@ -29,7 +29,7 @@ jobs:
 
             const fsPromises = fs.promises;
 
-            const folder = "./playwright-tests/qawolf/"
+            const folder = "./qawolf/"
             const teamId = process.env.QAWOLF_TEAM_ID;
             const authToken = process.env.QAWOLF_AUTH_TOKEN;
 
@@ -105,7 +105,6 @@ jobs:
       - name: commit
         run: |
           # Stage the file, commit and push
-          ls -lR
-          git add playwright-tests/qawolf/*
+          git add ./qawolf/*
           git commit -m "QA Wolf tests sync $(date +"%Y-%m-%d")"
           git push origin master

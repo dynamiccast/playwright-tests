@@ -5,7 +5,7 @@ import lodash from "lodash";
 const fsPromises = fs.promises;
 
 const folder = "./qawolf/"
-const graphQLendpoint = "http://54b9-24-160-138-160.ngrok.io/api/graphql";
+const graphQLendpoint = "https://www.qawolf.com/api/graphql";
 const helpersTemplatePath = "./.github/workflows/helpersTemplate.js";
 let helpersTemplateContent = null;
 const testTemplatePath = "./.github/workflows/testTemplate.js";

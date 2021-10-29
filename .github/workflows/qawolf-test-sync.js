@@ -6,6 +6,10 @@ const fsPromises = fs.promises;
 
 const folder = "./qawolf/"
 const graphQLendpoint = "http://54b9-24-160-138-160.ngrok.io/api/graphql";
+const helpersTemplatePath = "./.github/workflows/helpersTemplate.js";
+let helpersTemplateContent = null;
+const testTemplatePath = "./.github/workflows/testTemplate.js";
+let testTemplateContent = null;
 const teamId = process.env.QAWOLF_TEAM_ID;
 const authToken = process.env.QAWOLF_AUTH_TOKEN;
 
@@ -51,6 +55,22 @@ async function getContent(fileName) {
   return response.data.data.file.content;
 }
 
+function wrapHelpersTemplate(content) {
+  if (!helpersTemplateContent) {
+    helpersTemplateContent = fs.readFileSync(helpersTemplatePath).toString();
+  }
+
+  return helpersTemplateContent.replace("/* Insert helpers here */", content);
+}
+
+function wrapTestTemplate(content) {
+  if (!testTemplateContent) {
+    testTemplateContent = fs.readFileSync(testTemplatePath).toString();
+  }
+
+  return testTemplateContent.replace("/* Insert test here */", content);
+}
+
 async function writeTestCode(teamId) {
   const response = await request(`
     query tests {
@@ -63,14 +83,14 @@ async function writeTestCode(teamId) {
   let promises = [];
 
   const helperContent = await getContent(`helpers.${teamId}`);
-  promises.push(overwriteFile(folder + "helpers.js", helperContent));
+  promises.push(overwriteFile(folder + "helpers.js", wrapHelpersTemplate(helperContent)));
 
   response.data.data.tests.map(async (test) => {
     const content = await getContent(`test.${test.id}`);
     const outputFileName = `${lodash.snakeCase(test.name)}.js`;
 
     console.log(`Copy "${test.name}"`);
-    promises.push(overwriteFile(folder + outputFileName, content));
+    promises.push(overwriteFile(folder + outputFileName, wrapTestTemplate(content)));
   });
   
   await Promise.all(promises);

@@ -105,6 +105,7 @@ jobs:
       - name: commit
         run: |
           # Stage the file, commit and push
+          ls -lR
           git add playwright-tests/qawolf/*
           git commit -m "QA Wolf tests sync $(date +"%Y-%m-%d")"
           git push origin master

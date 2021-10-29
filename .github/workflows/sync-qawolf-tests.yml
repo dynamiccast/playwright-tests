@@ -1,0 +1,99 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  schedule:
+    - cron: '0 0 * * *'  # every day at midnight
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "fetch"
+  fetch-qawolf-tests:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v2
+
+      - name: Output current branch name & date
+        # To use latest action, specify "release-master" instead of "v0.0.2"
+        uses: satackey/action-js-inline@v0.0.2
+        with:
+          # Edit the following line to install packages required to run your script.
+          required-packages: axios
+          script: |
+            import axios from "axios";
+            import fs from 'fs';
+
+            const fsPromises = fs.promises;
+
+            const folder = "./qawolf/"
+            const teamId = process.env.QAWOLF_TEAM_ID;
+            const authToken = process.env.QAWOLF_AUTH_TOKEN;
+
+            async function writeTestCode(teamId) {
+              const response = await axios('http://54b9-24-160-138-160.ngrok.io/api/graphql', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json',
+                  'x-qawolf-team-id': teamId,
+                  'authorization': authToken,
+                },
+                data: {
+                  query: `
+                    query tests {
+                      tests(team_id: "${teamId}") {
+                        id
+                        name
+                        __typename
+                        }
+                      }`
+                },
+              });
+
+              response.data.data.tests.map(async (test) => {
+                const response2 = await axios('http://54b9-24-160-138-160.ngrok.io/api/graphql', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'x-qawolf-team-id': teamId,
+                    'authorization': authToken,
+                  },
+                  data: {
+                    query: `
+                      query file {
+                        file(id: "test.${test.id}") {
+                          content
+                          id
+                          is_deleted
+                          is_read_only
+                          path
+                          team_id
+                          __typename
+                          }
+                        }`
+                  },
+                });
+
+                const fileName = `./test-${test.name}.txt`;
+
+                try {
+                  await fsPromises.truncate(fileName, 0);
+                } catch (e) {
+                  // Probably because file does not exist yet
+                }
+                await fsPromises.writeFile(folder + test.name + ".js", response2.data.data.file.content);
+              });
+            }
+
+            try {
+              writeTestCode(teamId);
+            } catch (e) {
+              console.error(e);
+            }

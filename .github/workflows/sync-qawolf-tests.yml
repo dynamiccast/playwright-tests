@@ -95,3 +95,16 @@ jobs:
             } catch (e) {
               console.error(e);
             }
+
+      - name: setup git config
+        run: |
+          # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+
+      - name: commit
+        run: |
+          # Stage the file, commit and push
+          git add qawolf/*
+          git commit -m "QA Wolf tests sync $(date +"%Y-%m-%d")"
+          git push origin master

@@ -20,6 +20,8 @@ jobs:
       - name: Output current branch name & date
         # To use latest action, specify "release-master" instead of "v0.0.2"
         uses: satackey/action-js-inline@v0.0.2
+        env:
+          QAWOLF_TEAM_ID: ${{ secrets.QAWOLF_TEAM_ID }}
         with:
           # Edit the following line to install packages required to run your script.
           required-packages: axios

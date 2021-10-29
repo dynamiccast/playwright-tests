@@ -1,6 +1,6 @@
-const axios = require("axios");
-const fs = require("fs");
-const lodash = require("lodash");
+import axios from "axios";
+import fs from "fs";
+import lodash from "lodash";
 
 const fsPromises = fs.promises;
 

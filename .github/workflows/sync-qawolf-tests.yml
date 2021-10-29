@@ -22,6 +22,7 @@ jobs:
         uses: satackey/action-js-inline@v0.0.2
         env:
           QAWOLF_TEAM_ID: ${{ secrets.QAWOLF_TEAM_ID }}
+          QAWOLF_AUTH_TOKEN: ${{ secrets.QAWOLF_AUTH_TOKEN }}
         with:
           # Edit the following line to install packages required to run your script.
           required-packages: axios
